@@ -143,6 +143,10 @@
       <artifactId>logback-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.edap</groupId>
+      <artifactId>edap-log</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>org.eclipse.persistence.jpa</artifactId>
     </dependency>

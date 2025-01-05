@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="baseFile"
+              class="io.edap.log.appenders.FileAppender">
+        <file>target/testedap.log</file>
+        <bufferSize>256KB</bufferSize>
+        <immediateFlush>false</immediateFlush>
+        <encoder>
+            <pattern>%d %p [%t] %c - %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="baseAsyncFile"
+              class="io.edap.log.appenders.FileAppender">
+        <file>target/testedap-async.log</file>
+        <bufferSize>256KB</bufferSize>
+        <immediateFlush>false</immediateFlush>
+        <encoder>
+            <pattern>%d %5p [%t] %c{1} %X{transactionId} - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="syncAppender" level="debug">
+        <appender-ref ref="baseFile" />
+    </logger>
+    <logger name="AsyncDisruptorAppender" async="true" level="debug">
+        <appender-ref ref="baseAsyncFile" />
+    </logger>
+    <root level="DEBUG">
+        <appender-ref ref="baseFile" />
+    </root>
+</configuration>

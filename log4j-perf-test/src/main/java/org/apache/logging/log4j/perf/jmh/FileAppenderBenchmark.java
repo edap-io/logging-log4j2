@@ -20,6 +20,8 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
+
+import io.edap.log.LoggerManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -49,6 +51,8 @@ public class FileAppenderBenchmark {
     Logger log4j2MemoryLogger;
     org.slf4j.Logger slf4jLogger;
     org.slf4j.Logger slf4jAsyncLogger;
+    io.edap.log.Logger edapLogger;
+    io.edap.log.Logger edapAsyncLogger;
     org.apache.log4j.Logger log4j1Logger;
     java.util.logging.Logger julLogger;
 
@@ -57,6 +61,7 @@ public class FileAppenderBenchmark {
         System.setProperty("log4j.configurationFile", "log4j2-perf.xml");
         System.setProperty("log4j.configuration", "log4j12-perf.xml");
         System.setProperty("logback.configurationFile", "logback-perf.xml");
+        System.setProperty("edaplog.configurationFile", "edap-log-perf.xml");
 
         deleteLogFiles();
 
@@ -64,6 +69,10 @@ public class FileAppenderBenchmark {
         log4j2AsyncAppender = LogManager.getLogger("AsyncAppender");
         log4j2AsyncDisruptor = LogManager.getLogger("AsyncDisruptorAppender");
         log4j2AsyncLogger = LogManager.getLogger("AsyncLogger");
+
+        edapLogger      = LoggerManager.getLogger("syncAppender");
+        edapAsyncLogger = LoggerManager.getLogger("AsyncDisruptorAppender");
+
         // log4j2MemoryLogger = LogManager.getLogger("MemoryMapped");
         log4j2RandomLogger = LogManager.getLogger("TestRandom");
         slf4jLogger = LoggerFactory.getLogger(FileAppenderBenchmark.class);
@@ -82,6 +91,7 @@ public class FileAppenderBenchmark {
         System.clearProperty("log4j.configurationFile");
         System.clearProperty("log4j.configuration");
         System.clearProperty("logback.configurationFile");
+        System.clearProperty("edaplog.configurationFile");
 
         deleteLogFiles();
     }
@@ -89,6 +99,10 @@ public class FileAppenderBenchmark {
     private void deleteLogFiles() {
         final File logbackFile = new File("target/testlogback.log");
         logbackFile.delete();
+        final File edapLogFile = new File("target/testedap.log");
+        edapLogFile.delete();
+        final File edapAsyncLogFile = new File("target/testedap-async.log");
+        edapAsyncLogFile.delete();
         final File log4jFile = new File("target/testlog4j.log");
         log4jFile.delete();
         final File log4jRandomFile = new File("target/testRandomlog4j2.log");
@@ -162,6 +176,20 @@ public class FileAppenderBenchmark {
     @Benchmark
     public void logbackAsyncFile() {
         slf4jAsyncLogger.debug(MESSAGE);
+    }
+
+    @BenchmarkMode(Mode.Throughput)
+    @OutputTimeUnit(TimeUnit.SECONDS)
+    @Benchmark
+    public void edapFile() {
+        edapLogger.debug(MESSAGE);
+    }
+
+    @BenchmarkMode(Mode.Throughput)
+    @OutputTimeUnit(TimeUnit.SECONDS)
+    @Benchmark
+    public void edapAsyncFile() {
+        edapAsyncLogger.debug(MESSAGE);
     }
 
     @BenchmarkMode(Mode.Throughput)

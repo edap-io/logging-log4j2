@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="baseFile"
+              class="io.edap.log.appenders.FileAppender">
+        <file>target/test-output/elog-async.log</file>
+        <bufferSize>256KB</bufferSize>
+        <immediateFlush>false</immediateFlush>
+        <encoder>
+            <pattern>%d %p [%t] %c - %m%n</pattern>
+        </encoder>
+    </appender>
+    <root level="info" async="true">
+        <appender-ref ref="baseFile" />
+    </root>
+</configuration>

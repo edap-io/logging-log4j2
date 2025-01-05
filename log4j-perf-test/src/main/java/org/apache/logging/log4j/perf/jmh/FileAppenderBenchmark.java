@@ -16,12 +16,11 @@
  */
 package org.apache.logging.log4j.perf.jmh;
 
+import io.edap.log.LoggerManager;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
-
-import io.edap.log.LoggerManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -70,7 +69,7 @@ public class FileAppenderBenchmark {
         log4j2AsyncDisruptor = LogManager.getLogger("AsyncDisruptorAppender");
         log4j2AsyncLogger = LogManager.getLogger("AsyncLogger");
 
-        edapLogger      = LoggerManager.getLogger("syncAppender");
+        edapLogger = LoggerManager.getLogger("syncAppender");
         edapAsyncLogger = LoggerManager.getLogger("AsyncDisruptorAppender");
 
         // log4j2MemoryLogger = LogManager.getLogger("MemoryMapped");

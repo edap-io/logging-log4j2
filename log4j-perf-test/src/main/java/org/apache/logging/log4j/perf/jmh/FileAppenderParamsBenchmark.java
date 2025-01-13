@@ -18,6 +18,7 @@ package org.apache.logging.log4j.perf.jmh;
 
 import static org.apache.logging.log4j.util.Unbox.box;
 
+import io.edap.log.LoggerManager;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
@@ -46,6 +47,9 @@ public class FileAppenderParamsBenchmark {
     org.slf4j.Logger slf4jLogger;
     org.apache.log4j.Logger log4j1Logger;
     java.util.logging.Logger julLogger;
+    io.edap.log.Logger edapLogger;
+    io.edap.log.Logger edapAsyncLogger;
+    io.edap.log.Logger edapAsyncAppenderLogger;
     int j, k, m;
 
     @Setup
@@ -53,6 +57,7 @@ public class FileAppenderParamsBenchmark {
         System.setProperty("log4j.configurationFile", "log4j2-perf.xml");
         System.setProperty("log4j.configuration", "log4j12-perf.xml");
         System.setProperty("logback.configurationFile", "logback-perf.xml");
+        System.setProperty("edaplog.configurationFile", "edap-log-perf.xml");
 
         deleteLogFiles();
 
@@ -60,7 +65,9 @@ public class FileAppenderParamsBenchmark {
         log4j2RandomLogger = LogManager.getLogger("TestRandom");
         slf4jLogger = LoggerFactory.getLogger(getClass());
         log4j1Logger = org.apache.log4j.Logger.getLogger(getClass());
-
+        edapLogger = LoggerManager.getLogger("syncAppender");
+        edapAsyncLogger = LoggerManager.getLogger("AsyncDisruptorAppender");
+        edapAsyncAppenderLogger = LoggerManager.getLogger("AsyncAppenderAppender");
         julFileHandler = new FileHandler("target/testJulLog.log");
         julLogger = java.util.logging.Logger.getLogger(getClass().getName());
         julLogger.setUseParentHandlers(false);
@@ -89,6 +96,12 @@ public class FileAppenderParamsBenchmark {
         log4j2File.delete();
         final File julFile = new File("target/testJulLog.log");
         julFile.delete();
+        final File edapLogFile = new File("target/testedap.log");
+        edapLogFile.delete();
+        final File edapAsyncLogFile = new File("target/testedap-async.log");
+        edapAsyncLogFile.delete();
+        final File edapAsyncAppenderLogFile = new File("target/testedap-asyncAppender.log");
+        edapAsyncAppenderLogFile.delete();
     }
 
     @BenchmarkMode(Mode.Throughput)
@@ -145,6 +158,27 @@ public class FileAppenderParamsBenchmark {
     @Benchmark
     public void param3LogbackFile() {
         slf4jLogger.debug("Val1={}, val2={}, val3={}", (++j), (++k), (++m));
+    }
+
+    @BenchmarkMode(Mode.Throughput)
+    @OutputTimeUnit(TimeUnit.SECONDS)
+    @Benchmark
+    public void param3EdapFile() {
+        edapLogger.debug("Val1={}, val2={}, val3={}", l -> l.arg(++j).arg(++k).arg(++m));
+    }
+
+    @BenchmarkMode(Mode.Throughput)
+    @OutputTimeUnit(TimeUnit.SECONDS)
+    @Benchmark
+    public void param3EdapAsyncLoggerFile() {
+        edapAsyncLogger.debug("Val1={}, val2={}, val3={}", l -> l.arg(++j).arg(++k).arg(++m));
+    }
+
+    @BenchmarkMode(Mode.Throughput)
+    @OutputTimeUnit(TimeUnit.SECONDS)
+    @Benchmark
+    public void param3EdapAsyncAppenderFile() {
+        edapAsyncAppenderLogger.debug("Val1={}, val2={}, val3={}", l -> l.arg(++j).arg(++k).arg(++m));
     }
 
     @BenchmarkMode(Mode.Throughput)

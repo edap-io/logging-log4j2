@@ -52,6 +52,7 @@ public class FileAppenderBenchmark {
     org.slf4j.Logger slf4jAsyncLogger;
     io.edap.log.Logger edapLogger;
     io.edap.log.Logger edapAsyncLogger;
+    io.edap.log.Logger edapAsyncAppenderLogger;
     org.apache.log4j.Logger log4j1Logger;
     java.util.logging.Logger julLogger;
 
@@ -71,6 +72,7 @@ public class FileAppenderBenchmark {
 
         edapLogger = LoggerManager.getLogger("syncAppender");
         edapAsyncLogger = LoggerManager.getLogger("AsyncDisruptorAppender");
+        edapAsyncAppenderLogger = LoggerManager.getLogger("AsyncAppenderAppender");
 
         // log4j2MemoryLogger = LogManager.getLogger("MemoryMapped");
         log4j2RandomLogger = LogManager.getLogger("TestRandom");
@@ -102,6 +104,8 @@ public class FileAppenderBenchmark {
         edapLogFile.delete();
         final File edapAsyncLogFile = new File("target/testedap-async.log");
         edapAsyncLogFile.delete();
+        final File edapAsyncAppenderLogFile = new File("target/testedap-asyncAppender.log");
+        edapAsyncAppenderLogFile.delete();
         final File log4jFile = new File("target/testlog4j.log");
         log4jFile.delete();
         final File log4jRandomFile = new File("target/testRandomlog4j2.log");
@@ -189,6 +193,13 @@ public class FileAppenderBenchmark {
     @Benchmark
     public void edapAsyncFile() {
         edapAsyncLogger.debug(MESSAGE);
+    }
+
+    @BenchmarkMode(Mode.Throughput)
+    @OutputTimeUnit(TimeUnit.SECONDS)
+    @Benchmark
+    public void edapAsyncAppender() {
+        edapAsyncAppenderLogger.debug(MESSAGE);
     }
 
     @BenchmarkMode(Mode.Throughput)
